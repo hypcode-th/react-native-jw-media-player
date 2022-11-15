@@ -53,13 +53,13 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.8.9'
 
     // JWPlayer SDK
-    implementation 'com.jwplayer:jwplayer-core:4.7.1'
-    implementation 'com.jwplayer:jwplayer-common:4.7.1'
-    implementation 'com.jwplayer:jwplayer-chromecast:4.7.1'
-    implementation 'com.jwplayer:jwplayer-ima:4.7.1'
+    implementation 'com.jwplayer:jwplayer-core:4.8.0'
+    implementation 'com.jwplayer:jwplayer-common:4.8.0'
+    implementation 'com.jwplayer:jwplayer-chromecast:4.8.0'
+    implementation 'com.jwplayer:jwplayer-ima:4.8.0'
 
     // Ad dependencies
-    implementation 'com.google.ads.interactivemedia.v3:interactivemedia:3.27.0'
+    implementation 'com.google.ads.interactivemedia.v3:interactivemedia:3.29.0'
     implementation 'com.google.android.gms:play-services-ads-identifier:18.0.1'
     implementation 'com.google.android.gms:play-services-cast-framework:21.0.1'
 

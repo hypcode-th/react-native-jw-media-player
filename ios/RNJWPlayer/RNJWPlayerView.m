@@ -36,8 +36,8 @@
 -(void)reset
 {
     @try {
-        //[[NSNotificationCenter defaultCenter] removeObserver:self];
-
+//        [[NSNotificationCenter defaultCenter] removeObserver:self];
+        
         [[NSNotificationCenter defaultCenter] removeObserver:self name:AVAudioSessionMediaServicesWereResetNotification object:_audioSession];
         [[NSNotificationCenter defaultCenter] removeObserver:self name:AVAudioSessionInterruptionNotification object:_audioSession];
 
@@ -112,9 +112,10 @@
 {
     id license = config[@"license"];
     [self setLicense:license];
+    
+    _backgroundAudioEnabled = [config[@"backgroundAudioEnabled"] boolValue];
+    _pipEnabled = [config[@"pipEnabled"] boolValue];
 
-    _backgroundAudioEnabled = config[@"backgroundAudioEnabled"];
-    _pipEnabled = config[@"pipEnabled"];
     if (_backgroundAudioEnabled || _pipEnabled) {
         id category = config[@"category"];
         id categoryOptions = config[@"categoryOptions"];
@@ -475,13 +476,15 @@
     }
 
     id autostart = config[@"autostart"];
-    if (autostart != nil && (autostart != (id)[NSNull null])) {
+    if ([autostart boolValue]) {
         [configBuilder autostart:autostart];
     }
 
     id repeatContent = config[@"repeat"];
     if (repeatContent != nil && (repeatContent != (id)[NSNull null])) {
-        [configBuilder repeatContent:repeatContent];
+        if ([repeatContent boolValue]) {
+            [configBuilder repeatContent:repeatContent];
+        }
     }
 
     id preload = config[@"preload"];
@@ -701,9 +704,18 @@
 {
     if (_playerViewController) {
         [_playerViewController.player pause]; // hack for stop not always stopping on unmount
-        _playerViewController.enableLockScreenControls = NO;
         [_playerViewController.player stop];
+        _playerViewController.enableLockScreenControls = NO;
+        
+        // hack for stop not always stopping on unmount
+        JWPlayerConfigurationBuilder *configBuilder = [[JWPlayerConfigurationBuilder alloc] init];
+        [configBuilder playlist:@[]];
+        NSError* error = nil;
+        [_playerViewController.player configurePlayerWith:[configBuilder buildAndReturnError:&error]];
+        
+        [_playerViewController removeDelegates];
         _playerViewController.parentView = nil;
+        
         [_playerViewController.view removeFromSuperview];
         [_playerViewController removeFromParentViewController];
         [_playerViewController willMoveToParentViewController:nil];
@@ -759,9 +771,9 @@
     }
 
     [self addSubview:self.playerView];
-
-    BOOL autostart = config[@"autostart"];
-    if (autostart) {
+    
+    id autostart = config[@"autostart"];
+    if ([autostart boolValue]) {
         [_playerView.player play];
     }
 
